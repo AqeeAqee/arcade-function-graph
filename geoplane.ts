@@ -1,4 +1,5 @@
 // color, PrintValue
+// control move with btns
 // f(t)
 // common functions, x, x**2,sin(x), ...
 // data[]
@@ -12,9 +13,9 @@ enum markType{
 }
 
 //% icon="\uf201"
-//% color=#0ffffff weight=1 
+//% color=#0999999 weight=1 
 //% groups='["Basic", "Advanced"]'
-//% block="Geo Plane"
+//% block="GeoPlane"
 namespace geoplane{
     type plotFunction =(x:number)=>void
     let curves: Curve[]=[]
@@ -36,13 +37,14 @@ namespace geoplane{
     let y:number=0
 
 
-    //% block="plot y=function( $x ) ||with color $color, join dots with line $joinDots"
+    //% block="on plot y=function( |$x| ) || with color $color, join dots with line $joinDots"
     //% draggableParameters="reporter"
     //% x.shim=reporter
     //% color.defl=_colorPlot
     //% joinDots.defl=true
+    // blockAllowMultiple=1
     export function plot(handler: (x: number) => void, color?: number, joinDots?:boolean){
-        if(!joinDots) joinDots=true
+        if (joinDots != true && joinDots !=false) joinDots=true
 
         if (!color) color = _colorPlot
         color=Math.clamp(1, 15, color)
@@ -74,8 +76,8 @@ img`
     . . . . . . . . . . . . . . . .
 `
     game.onPaint(()=>{
+        if(curves.length<1) return
 
-//grid
         for (let ix = Math.max(0, _offsetX % _scale); ix < screen.width; ix += _scale) {
             if(_markType==markType.mark)
                 screen.drawLine(ix, _offsetY+1, ix, _offsetY - 1, _colorDefault)
@@ -98,7 +100,7 @@ img`
                 curve.plot(x)
                 const newX = x * _scale + _offsetX, newY = -y * _scale + _offsetY
                 if(!curve.joinDots)
-                    screen.setPixel(x,y,curve.color)
+                    screen.setPixel(newX,newY,curve.color)
                 else if(!!lastX&&!!lastY){
                     screen.drawLine(lastX,lastY,newX,newY, curve.color)
                 }
@@ -122,7 +124,7 @@ img`
         _scale = scale
     }
 
-    //% block="set scale$scale"
+    //% block="set scale mark type $v"
     //% scale.defl=10
     export function setMarkType(v: markType) {
         _markType = v

@@ -5,12 +5,10 @@
         "device": "*"
     },
     "files": [
-        "main.blocks",
         "main.ts",
         "README.md",
         "assets.json",
-        "geoplane.ts",
-        "main.py"
+        "geoplane.ts"
     ],
     "testFiles": [
         "test.ts"
