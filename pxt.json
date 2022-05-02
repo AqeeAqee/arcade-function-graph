@@ -9,7 +9,8 @@
         "main.ts",
         "README.md",
         "assets.json",
-        "geoplane.ts"
+        "geoplane.ts",
+        "main.py"
     ],
     "testFiles": [
         "test.ts"
