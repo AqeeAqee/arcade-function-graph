@@ -1,15 +1,13 @@
 
-let a=0
-game.onUpdate(()=>{
 
+// geoplane.setMarkType(markType.mark)
+// geoplane.setScale(29)
+// geoplane.setOffset(80,110)
+
+geoplane.plot(3, true,(x) => {
+    geoplane.setY(Math.tan(x))
 })
 
-geoplane.setMarkType(markType.mark)
-geoplane.setScale(29)
-geoplane.setOffset(80,110)
-geoplane.plot((x) => {
-    geoplane.setY(x ** 2)
-},3, false)
-geoplane.plot((x) => {
-    geoplane.setY(x ** 1)
-}, 5)
+geoplane.plot(2, true,(x) => {
+    geoplane.setY(x ** 3)
+})

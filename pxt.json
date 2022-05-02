@@ -5,13 +5,12 @@
         "device": "*"
     },
     "files": [
-        "main.ts",
         "README.md",
         "assets.json",
         "geoplane.ts"
     ],
     "testFiles": [
-        "test.ts"
+        "main.ts"
     ],
     "targetVersions": {
         "target": "1.8.22",

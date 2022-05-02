@@ -13,106 +13,98 @@ enum markType{
 }
 
 //% icon="\uf201"
-//% color=#0999999 weight=1 
+//% color=#AAAAAA weight=1 
 //% groups='["Basic", "Advanced"]'
-//% block="GeoPlane"
-namespace geoplane{
-    type plotFunction =(x:number)=>void
-    let curves: Curve[]=[]
+//% block="Geo Plane"
+namespace geoplane {
+    // type plotFunction = (x: number) => void
+    export let curves: Curve[] = []
     class Curve {
         constructor(
-            public plot:plotFunction, 
-            public color:number,
-            public joinDots:boolean,
+            public handler: (x: number) => void,
+            public color: number,
+            public joinDots: boolean,
 
-            ){
+        ) {
         }
     }
 
     let _markType=markType.grid
-    let _offsetX=screen.width/2, _offsetY=screen.height/2
-    let _scale=10
-    let _colorDefault=1, _colorPlot=2, _colorGrid=11
+    let _offsetX = screen.width / 2, _offsetY = screen.height / 2
+    let _scale = 10
+    let _colorDefault = 1, _colorPlot = 2, _colorGrid = 11
 
-    let y:number=0
+    let y: number = 0
 
 
-    //% block="on plot y=function( |$x| ) || with color $color, join dots with line $joinDots"
+    //% block="draw curve Y by $x, in color$color=colorindexpicker, join dots $joinDots "
     //% draggableParameters="reporter"
-    //% x.shim=reporter
-    //% color.defl=_colorPlot
+    //% color.defl=3
     //% joinDots.defl=true
-    // blockAllowMultiple=1
-    export function plot(handler: (x: number) => void, color?: number, joinDots?:boolean){
+    //% blockAllowMultiple=1
+    //% blockid=geoplane_plot
+    export function plot(color: number, joinDots: boolean,handler: (x: number) => void) {
+        //, joinDots?:boolean , color: number
+        // let joinDots = false
+        // let color =3
         if (joinDots != true && joinDots !=false) joinDots=true
 
         if (!color) color = _colorPlot
-        color=Math.clamp(1, 15, color)
+        color = Math.clamp(1, 15, color)
 
-        curves.push(new Curve(handler, color, joinDots))
+        const newCurve = new Curve(handler, color, joinDots)
+        if(!curves) curves=[]
+        curves.push(newCurve)
     }
 
-    //% block="set Y(function(x))=$v"
-    export function setY(v:number){
-        y=v
+    //% block="set Y= |$v"
+    export function setY(v: number) {
+        y = v
     }
 
-img`
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-`
-    game.onPaint(()=>{
-        if(curves.length<1) return
+    game.onPaint(() => {
+        if (curves.length < 1) return
 
         for (let ix = Math.max(0, _offsetX % _scale); ix < screen.width; ix += _scale) {
             if(_markType==markType.mark)
-                screen.drawLine(ix, _offsetY+1, ix, _offsetY - 1, _colorDefault)
+                screen.drawLine(ix, _offsetY + 1, ix, _offsetY - 1, _colorDefault)
             else
                 screen.drawLine(ix, 0, ix, screen.height, _colorGrid)
         }
         screen.drawLine(_offsetX, 0, _offsetX, screen.height, _colorDefault)
 
         for (let iy = Math.max(0, _offsetY % _scale); iy < screen.width; iy += _scale) {
-            if (_markType == markType.mark)
+            if(_markType == markType.mark)
                 screen.drawLine(_offsetX + 1, iy, _offsetX - 1, iy, _colorDefault)
             else
                 screen.drawLine(0, iy, screen.width, iy, _colorGrid)
         }
         screen.drawLine(0, _offsetY, screen.width, _offsetY, _colorDefault)
 
-        curves.forEach((curve)=>{
-            let lastX,lastY
-            for(let x=-_offsetX;x<_offsetX;x+=.1){
-                curve.plot(x)
+        for(let cv of curves){
+            let lastX, lastY
+            y=null
+            for (let x = -_offsetX; x < _offsetX; x += 1/_scale) {
+                cv.handler(x)
+                if(y==null) continue
                 const newX = x * _scale + _offsetX, newY = -y * _scale + _offsetY
-                if(!curve.joinDots)
-                    screen.setPixel(newX,newY,curve.color)
-                else if(!!lastX&&!!lastY){
-                    screen.drawLine(lastX,lastY,newX,newY, curve.color)
+                if (!cv.joinDots)
+                    screen.setPixel(newX, newY, cv.color)
+                else if (!!lastX && !!lastY && Math.abs(lastY - newY) < screen.height) {
+                    screen.drawLine(lastX, lastY, newX, newY, cv.color)
                 }
-                lastX=newX
-                lastY=newY
+                // if()  //(newX<0||newX>screen.width||newY<0||newY>screen.height)
+                //     lastX=undefined, lastY=undefined
+                // else
+                    lastX = newX, lastY = newY
             }
-        })
+        }
     })
 
     //% block="set origin offset x$offsetX y$offsetY"
-    //% offsetX.defl=screen.width/2
-    //% offsetY.defl=screen.height/2
+    //% offsetX.defl=80
+    //% offsetY.defl=60
+    //% blockid=geoplane_setOffset
     export function setOffset(offsetX:number,offsetY:number){
         _offsetX=offsetX
         _offsetY=offsetY
@@ -120,12 +112,14 @@ img`
 
     //% block="set scale$scale"
     //% scale.defl=10
+    //% blockid=geoplane_setScale
     export function setScale(scale: number) {
         _scale = scale
     }
 
     //% block="set scale mark type $v"
-    //% scale.defl=10
+    //% v.defl=markType.mark
+    //% blockid=geoplane_setMarkType
     export function setMarkType(v: markType) {
         _markType = v
     }
