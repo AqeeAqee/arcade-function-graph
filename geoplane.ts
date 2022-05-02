@@ -42,8 +42,8 @@ namespace geoplane {
     //% color.defl=3
     //% joinDots.defl=true
     //% blockAllowMultiple=1
-    //% blockid=geoplane_plot
-    export function plot(color: number, joinDots: boolean,handler: (x: number) => void) {
+    //% blockid=geoplane_drawCurve
+    export function drawCurve(color: number, joinDots: boolean,handler: (x: number) => void) {
         //, joinDots?:boolean , color: number
         // let joinDots = false
         // let color =3
