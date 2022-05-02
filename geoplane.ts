@@ -1,5 +1,7 @@
+
+// x interval
 // dataSerial[], dots/lines
-// color, PrintValue
+// PrintValue
 // control move with btns
 // f(t)
 // common functions, x, x**2,sin(x), ...
@@ -140,7 +142,7 @@ namespace geoplane {
                 const newX = x * _scale + _offsetX, newY = -y * _scale + _offsetY
                 if (!cv.joinDots)
                     screen.setPixel(newX, newY, cv.color)
-                else if (!!lastX && !!lastY && Math.abs(lastY - newY) < screen.height) {
+                else if (!!lastX && !!lastY && !(lastY < 0 && newY > screen.height) && !(newY < 0 && lastY > screen.height)) {
                     screen.drawLine(lastX, lastY, newX, newY, cv.color)
                 }
                 // if()  //(newX<0||newX>screen.width||newY<0||newY>screen.height)

@@ -1,7 +1,7 @@
 
 
 // geoplane.setMarkType(markType.mark)
-// geoplane.setScale(29)
+geoplane.setScale(8)
 // geoplane.setOffset(80,110)
 
 geoplane.drawCurve(3, true,(x) => {
