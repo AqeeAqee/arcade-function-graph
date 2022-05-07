@@ -43,14 +43,14 @@ namespace functionGraph{
      * Define a graph of a function(x). This will be called many times for each x, as long as x value in the canvas.
      * Actually, the stepX = 1/scale, one time per pixel on axis X
      * @param color Color for drawing funciton graph
-     * @param joinDots connect dots(x,y) into lines
+     * @param joinDots connect dots(x,y) into lines, for funcitons which result values far away each others.
      * @param x the x in f(x), you can grag it into set Y=() block to define your f(x)
      */
 
-    //% block="graph of y|=|f|(|$x|)|, in color$color=colorindexpicker, join dots $joinDots "
+    //% block="graph of y|=|f|(|$x|)|, in color$color=colorindexpicker, join dots $joinDots=toggleOnOff"
     //% draggableParameters="reporter"
     //% color.defl=2
-    //% joinDots.defl=true
+    //% joinDots.defl=false
     //% blockAllowMultiple=1
     //% blockid=functionGraph_addFuctionGraph
     //% weight=100 group="Basic"
@@ -218,14 +218,22 @@ namespace functionGraph{
         imgCanvas.drawLine(0, axesPosY, imgCanvas.width, axesPosY, colorMark)
         imgCanvas.drawLine(axesPosX, 0, axesPosX, imgCanvas.height, colorMark)
 
-        imgCanvas.print("(" + orginOffsetX + "," + orginOffsetY + ")", axesPosX, axesPosY + 1, colorMark)
+        const originText = "(" + orginOffsetX + "," + orginOffsetY + ")"
+        const orginPrintX = (imgCanvas.width - axesPosX < originText.length * image.font5.charWidth) ?
+            axesPosX - originText.length * image.font5.charWidth +2:
+            axesPosX +1
+        const orginPrintY = (imgCanvas.height - axesPosY < image.font5.charHeight) ?
+            axesPosY - image.font5.charHeight -2:
+            axesPosY +3
+        imgCanvas.print("(" + orginOffsetX + "," + orginOffsetY + ")", orginPrintX, orginPrintY, colorMark, image.font5)
 
         for (let cv of functions) {
             let lastX, lastY
-            yValue = null
             for (let x = -axesPosX / scale + orginOffsetX; x < (160 - axesPosX) / scale + orginOffsetX; x += 1 / scale) {
+                yValue = null
                 cv.handler(x)
-                if (yValue == null) continue
+                if (yValue == null || isNaN(yValue)) continue
+                
                 const newX = (x - orginOffsetX) * scale + axesPosX, newY = -(yValue - orginOffsetY) * scale + axesPosY
                 if (!cv.joinDots)
                     imgCanvas.setPixel(newX, newY, cv.color)

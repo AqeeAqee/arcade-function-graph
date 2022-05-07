@@ -1,25 +1,25 @@
 game.stats=true
 
-functionGraph.setScale(10)
-functionGraph.setMark(1)
-functionGraph.setGrid(1)
-functionGraph.setOriginOffset(22.5,150)
-functionGraph.setAxesPos(80,60)
+functionGraph.setScale(20)
+// functionGraph.setMark(1)
+// functionGraph.setGrid(1)
+functionGraph.setOriginOffset(12345,67890)
+functionGraph.setAxesPos(66,117)
 
-functionGraph.addFuctionGraph(3, true,(x) => {
-    functionGraph.setY(Math.tan(x))
-})
-
-functionGraph.addFuctionGraph(2, true,(x) => {
-    functionGraph.setY(x**2)
+functionGraph.addFuctionGraph(3, false,(x) => {
+    functionGraph.setY(Math.sqrt(x))
 })
 
-functionGraph.addFuctionGraph(5, true, function (x) {
-    functionGraph.setY((45 - (x / 3)) * 4)
-})
-functionGraph.addFuctionGraph(5, true, function (x) {
-    functionGraph.setY((42 - (x / 5)) * 4)
-})
+// functionGraph.addFuctionGraph(2, true,(x) => {
+//     functionGraph.setY(x**2)
+// })
+
+// functionGraph.addFuctionGraph(5, true, function (x) {
+//     functionGraph.setY((45 - (x / 3)) * 4)
+// })
+// functionGraph.addFuctionGraph(5, true, function (x) {
+//     functionGraph.setY((42 - (x / 5)) * 4)
+// })
 
 // //by default, all ghaph drawn on BackgroundImage
 // //do following if want to draw on a image
