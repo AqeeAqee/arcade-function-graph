@@ -6,8 +6,8 @@
     },
     "files": [
         "README.md",
-        "assets.json",
-        "geoplane.ts"
+        "function-graph.ts",
+        "assets.json"
     ],
     "testFiles": [
         "main.ts"
