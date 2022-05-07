@@ -1,5 +1,5 @@
 {
-    "name": "arcade-fx-graph",
+    "name": "arcade-function-graph",
     "description": "",
     "dependencies": {
         "device": "*"

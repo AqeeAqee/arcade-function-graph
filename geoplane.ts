@@ -1,4 +1,4 @@
-// +extension name: f(x) Graph
+// + extension name: function/f(x) Graph
 // + set offseted origin, and set position of axes
 // drawing methods
 // + position picker for offsetXY
