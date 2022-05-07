@@ -1,5 +1,5 @@
 {
-    "name": "arcade-geo-plane",
+    "name": "arcade-fx-graph",
     "description": "",
     "dependencies": {
         "device": "*"
