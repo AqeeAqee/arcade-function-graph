@@ -33,9 +33,9 @@ namespace functionGraph{
     const AXIS_OFFSET_MARGIN = 10
     let axesPosX = imgCanvas.width / 2, axesPosY = imgCanvas.height / 2
     let orginOffsetX = 0, orginOffsetY = 0
-    let scale = 10
+    let scale = 1
     let colorPlot = 2, colorMark = 1, colorGrid = 11, colorCursor = 2
-    let markInterval = 1, gridInterval = 5
+    let markInterval = 10, gridInterval = 20
 
     let yValue: number = 0
 
@@ -44,7 +44,7 @@ namespace functionGraph{
      * Actually, the stepX = 1/scale, one time per pixel on axis X
      * @param color Color for drawing funciton graph
      * @param joinDots connect dots(x,y) into lines, for funcitons which result values far away each others.
-     * @param x the x in f(x), you can grag it into set Y=() block to define your f(x)
+     * @param x the x in f(x), you can grag it into "set f(x)=" block to define your f(x)
      */
 
     //% block="graph of y|=|f|(|$x|)|, in color$color=colorindexpicker, join dots $joinDots=toggleOnOff"
@@ -84,27 +84,14 @@ namespace functionGraph{
     }
 
     /**
-     * Set offset values of origin point (not screen pixel).
+     * Set X axis and Y axis position on canvas, in pixel.
+     * (on screen background by default)
      */
-    //% block="set origin offset x$x y$y"
-    //% x.defl=0
-    //% y.defl=0
-    //% blockid=functionGraph_setOriginOffset
-    //% weight=80 group="Advanced"
-    export function setOriginOffset(x: number, y: number) {
-        orginOffsetX = x
-        orginOffsetY = y
-        redraw()
-    }
-
-    /**
-     * Set X axis and Y axis position in canvas, in pixel
-     */
-    //% block="set axes offset x$x y$y"
+    //% block="set axes position x$x y$y on canvas"
     //% x.defl=80
     //% y.defl=60
     //% blockid=functionGraph_setAxesPos
-    //% weight=80 group="Advanced"
+    //% weight=81 group="Advanced"
     //% x.shadow="positionPicker" y.shadow="positionPicker"
     export function setAxesPos(x: number, y: number) {
         axesPosX = x
@@ -112,12 +99,48 @@ namespace functionGraph{
         redraw()
     }
 
-    //% block="set scale$s"
-    //% s.defl=10
-    //% blockid=functionGraph_setScale
+    /**
+     * Change X axis and Y axis position on canvas, in pixel.
+     * (on screen background by default)
+     */
+    //% block="change axes position x$x y$y on canvas"
+    //% x.defl=1
+    //% y.defl=1
+    //% blockid=functionGraph_changeAxesPos
+    //% weight=80 group="Advanced"
+    export function changeAxesPos(x: number, y: number) {
+        axesPosX += x
+        axesPosY += y
+        redraw()
+    }
+
+    /**
+     * Set offset values of origin point.
+     * (not canvas pixel).
+     */
+    //% block="set axes at value x$x y$y"
+    //% x.defl=0
+    //% y.defl=0
+    //% blockid=functionGraph_setOriginOffset
     //% weight=79 group="Advanced"
-    export function setScale(s: number) {
-        scale = s
+    export function setOriginOffset(x: number, y: number) {
+        orginOffsetX = x
+        orginOffsetY = y
+        redraw()
+    }
+
+    /**
+     * Change offset values of origin point.
+     * (not canvas pixel).
+     */
+    //% block="change axes value x$x y$y"
+    //% x.defl=0
+    //% y.defl=0
+    //% blockid=functionGraph_changeOriginOffset
+    //% weight=78 group="Advanced"
+    export function changeOriginOffset(x: number, y: number) {
+        orginOffsetX += x
+        orginOffsetY += y
         redraw()
     }
 
@@ -126,7 +149,7 @@ namespace functionGraph{
     //% colorMark.defl=1
     //% colorGrid.defl=11
     //% colorCursor.defl=2
-    //% weight=0 group="Advanced"
+    //% weight=70 group="Advanced"
     //% deprecated blockHidden
     export function setColors(cMark: number, cGrid?: number, cCursor?: number) {
         colorMark = cMark
@@ -135,11 +158,20 @@ namespace functionGraph{
         redraw()
     }
 
+    //% block="set scale$s, how many pixels per unit"
+    //% s.defl=1
+    //% blockid=functionGraph_setScale
+    //% weight=69 group="Advanced"
+    export function setScale(s: number) {
+        scale = s
+        redraw()
+    }
+
     //% block="set Mark interval $interval||, color$color=colorindexpicker"
     //% blockid=functionGraph_setmark
-    //% interval.defl=1 interval.min=0
+    //% interval.defl=10 interval.min=0
     //% color.defl=1
-    //% weight=70 group="Advanced"
+    //% weight=67 group="Advanced"
     export function setMark(interval: number, color?: number) {
         markInterval = Math.ceil(interval)
         if (color) colorMark = color
@@ -148,9 +180,9 @@ namespace functionGraph{
 
     //% block="set Grid interval $interval||, color$color=colorindexpicker"
     //% blockid=functionGraph_setgrid
-    //% interval.defl=5 interval.min=0
+    //% interval.defl=20 interval.min=0
     //% color.defl=11
-    //% weight=69 group="Advanced"
+    //% weight=65 group="Advanced"
     export function setGrid(interval: number, color?: number) {
         gridInterval = Math.ceil(interval)
         if (color) colorGrid = color
@@ -169,7 +201,9 @@ namespace functionGraph{
         if (canvas) {
             imgCanvas = canvas
             setAxesPos(canvas.width / 2, canvas.height / 2)
-            // redraw() //called in setAxesPos()
+
+            //called in setAxesPos()
+            // redraw() 
         }
     }
 
@@ -184,7 +218,7 @@ namespace functionGraph{
     }
 
     /**
-     * Don't need called usually, unless parameters changed, which presents in setY=f(x), outside the "addFuctionGraph(...)".
+     * Don't need called usually, unless parameters presents in "set f(x)=", and be changed outside the "addFuctionGraph(...)".
      * Blocks, that changing curve parameters, will call this automatically.
      */
     //% block="redraw canvas based on all parameters"
@@ -218,14 +252,14 @@ namespace functionGraph{
         imgCanvas.drawLine(0, axesPosY, imgCanvas.width, axesPosY, colorMark)
         imgCanvas.drawLine(axesPosX, 0, axesPosX, imgCanvas.height, colorMark)
 
-        const originText = "(" + orginOffsetX + "," + orginOffsetY + ")"
-        const orginPrintX = (imgCanvas.width - axesPosX < originText.length * image.font5.charWidth) ?
+        const originText = "(" + Math.roundWithPrecision(orginOffsetX, 3) + "," + Math.roundWithPrecision(orginOffsetY, 3) + ")"
+        const orginPrintX = (imgCanvas.width - axesPosX < originText.length * image.font5.charWidth-1) ?
             axesPosX - originText.length * image.font5.charWidth +2:
             axesPosX +1
-        const orginPrintY = (imgCanvas.height - axesPosY < image.font5.charHeight) ?
+        const orginPrintY = (imgCanvas.height - axesPosY < image.font5.charHeight+3) ?
             axesPosY - image.font5.charHeight -2:
             axesPosY +3
-        imgCanvas.print("(" + orginOffsetX + "," + orginOffsetY + ")", orginPrintX, orginPrintY, colorMark, image.font5)
+        imgCanvas.print(originText, orginPrintX, orginPrintY, colorMark, image.font5)
 
         for (let cv of functions) {
             let lastX, lastY
